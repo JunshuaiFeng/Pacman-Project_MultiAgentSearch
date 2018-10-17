@@ -148,7 +148,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             actions = state.getLegalActions(agentIndex)
             nextValue = []
             for a in actions:
-                successor = value(state.generateSuccessor(agentIndex, a), nextAgent, d)
+                successor = value(state.generateSuccessor(agentIndex, a), nextAgent, d)[0]
                 nextValue.append(successor)
 
             if agentIndex == 0:  # max state
@@ -219,7 +219,27 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
           legal moves.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        def value(state, agentIndex, depth):
+            if depth == 0 or state.isWin() or state.isLose():
+                return [self.evaluationFunction(state), None]
+
+            terminalState = state.getNumAgents() - 1
+            nextAgent = 0 if agentIndex == terminalState else agentIndex + 1
+            d = depth - 1 if agentIndex == terminalState else depth
+
+            actions = state.getLegalActions(agentIndex)
+            nextValue = []
+            for a in actions:
+                successor = value(state.generateSuccessor(agentIndex, a), nextAgent, d)[0]
+                nextValue.append(successor)
+
+            if agentIndex == 0:  # max state
+                return [max(nextValue), actions[nextValue.index(max(nextValue))]]
+            else:
+                return [sum(nextValue)/float(len(actions)), random.choice(actions)]
+
+        bestAction = value(gameState, self.index, self.depth)[1]
+        return bestAction
 
 def betterEvaluationFunction(currentGameState):
     """
