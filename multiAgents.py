@@ -188,7 +188,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                         v = successor
                         localAction = a
                     alpha = max(alpha, v)
-                    if beta < alpha: break  # prune
+                    if alpha > beta: break  # prune
 
             else:  # min state
                 v = float('inf')
@@ -249,7 +249,18 @@ def betterEvaluationFunction(currentGameState):
       DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    pacPos = currentGameState.getPacmanPosition()
+    ghostPos = currentGameState.getGhostPositions()[0]
+    distance = manhattanDistance(ghostPos, pacPos)
+    if distance == 0:
+        ghostScore = -100
+    elif currentGameState.getGhostStates()[0].scaredTimer > 0:
+        ghostScore = 100 / distance
+    else:
+        ghostScore = -10 / distance
+
+    return currentGameState.getScore() + ghostScore
 
 # Abbreviation
 better = betterEvaluationFunction
